@@ -10,29 +10,27 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-app.delete('/products/:codigo_producto', async (req, res) => {
-  const { codigo_producto } = req.params;  
+app.delete('/products/:product_code', async (req, res) => {
+  const { product_code } = req.params;  
   try {
     const query = `
-      UPDATE productos
-      SET estado = false, fecha_actualizacion = CURRENT_TIMESTAMP
-      WHERE codigo_producto = $1
+      UPDATE products
+      SET status = false, updated_at = CURRENT_TIMESTAMP
+      WHERE product_code = $1
       RETURNING *;
     `;
 
-    const result = await pool.query(query, [codigo_producto]);
+    const result = await pool.query(query, [product_code]);
 
     if (result.rowCount === 0) {
-      return res.status(404).json(ApiResponse('error', null, 'Producto no encontrado.'));
+      return res.status(404).json(ApiResponse('error', null, 'Product not found.'));
     }
-    res.json(ApiResponse('success', result.rows[0], 'Producto desactivado exitosamente.'));
+    res.json(ApiResponse('success', result.rows[0], 'Product successfully deactivated.'));
   } catch (err) {
     console.log(err);
-    res.status(500).json(ApiResponse('error', null, 'Error al desactivar el producto.'));
+    res.status(500).json(ApiResponse('error', null, 'Error deactivating the product.'));
   }
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
