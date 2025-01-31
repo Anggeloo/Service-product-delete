@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const pool = require('../db');
 
 exports.deleteProduct = async (codigo_producto) => {
     const query = `
